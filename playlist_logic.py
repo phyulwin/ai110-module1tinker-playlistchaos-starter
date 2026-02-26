@@ -57,15 +57,38 @@ def normalize_song(raw: Song) -> Song:
     }
 
 
+# def classify_song(song: Song, profile: Dict[str, object]) -> str:
+#     """Return a mood label given a song and user profile."""
+#     energy = song.get("energy", 0)
+#     genre = song.get("genre", "")
+#     title = song.get("title", "")
+
+#     hype_min_energy = profile.get("hype_min_energy", 7)
+#     chill_max_energy = profile.get("chill_max_energy", 3)
+#     favorite_genre = profile.get("favorite_genre", "")
+
+#     hype_keywords = ["rock", "punk", "party"]
+#     chill_keywords = ["lofi", "ambient", "sleep"]
+
+#     is_hype_keyword = any(k in genre for k in hype_keywords)
+#     is_chill_keyword = any(k in title for k in chill_keywords)
+
+#     if genre == favorite_genre or energy >= hype_min_energy or is_hype_keyword:
+#         return "Hype"
+#     if energy <= chill_max_energy or is_chill_keyword:
+#         return "Chill"
+#     return "Mixed"
+
+# FIXED - FEB 25 2026
 def classify_song(song: Song, profile: Dict[str, object]) -> str:
     """Return a mood label given a song and user profile."""
     energy = song.get("energy", 0)
-    genre = song.get("genre", "")
-    title = song.get("title", "")
+    genre = str(song.get("genre", "")).lower()
+    title = str(song.get("title", "")).lower()
 
     hype_min_energy = profile.get("hype_min_energy", 7)
     chill_max_energy = profile.get("chill_max_energy", 3)
-    favorite_genre = profile.get("favorite_genre", "")
+    favorite_genre = str(profile.get("favorite_genre", "")).lower()
 
     hype_keywords = ["rock", "punk", "party"]
     chill_keywords = ["lofi", "ambient", "sleep"]
@@ -78,7 +101,6 @@ def classify_song(song: Song, profile: Dict[str, object]) -> str:
     if energy <= chill_max_energy or is_chill_keyword:
         return "Chill"
     return "Mixed"
-
 
 def build_playlists(songs: List[Song], profile: Dict[str, object]) -> PlaylistMap:
     """Group songs into playlists based on mood and profile."""
@@ -106,6 +128,38 @@ def merge_playlists(a: PlaylistMap, b: PlaylistMap) -> PlaylistMap:
     return merged
 
 
+# def compute_playlist_stats(playlists: PlaylistMap) -> Dict[str, object]:
+#     """Compute statistics across all playlists."""
+#     all_songs: List[Song] = []
+#     for songs in playlists.values():
+#         all_songs.extend(songs)
+
+#     hype = playlists.get("Hype", [])
+#     chill = playlists.get("Chill", [])
+#     mixed = playlists.get("Mixed", [])
+
+#     total = len(hype)
+#     hype_ratio = len(hype) / total if total > 0 else 0.0
+
+#     avg_energy = 0.0
+#     if all_songs:
+#         total_energy = sum(song.get("energy", 0) for song in hype)
+#         avg_energy = total_energy / len(all_songs)
+
+#     top_artist, top_count = most_common_artist(all_songs)
+
+#     return {
+#         "total_songs": len(all_songs),
+#         "hype_count": len(hype),
+#         "chill_count": len(chill),
+#         "mixed_count": len(mixed),
+#         "hype_ratio": hype_ratio,
+#         "avg_energy": avg_energy,
+#         "top_artist": top_artist,
+#         "top_artist_count": top_count,
+#     }
+
+# FIXED - FEB 25 2026
 def compute_playlist_stats(playlists: PlaylistMap) -> Dict[str, object]:
     """Compute statistics across all playlists."""
     all_songs: List[Song] = []
@@ -116,18 +170,19 @@ def compute_playlist_stats(playlists: PlaylistMap) -> Dict[str, object]:
     chill = playlists.get("Chill", [])
     mixed = playlists.get("Mixed", [])
 
-    total = len(hype)
-    hype_ratio = len(hype) / total if total > 0 else 0.0
+    total_unique = len(all_songs)
+
+    hype_ratio = len(hype) / total_unique if total_unique > 0 else 0.0
 
     avg_energy = 0.0
-    if all_songs:
-        total_energy = sum(song.get("energy", 0) for song in hype)
-        avg_energy = total_energy / len(all_songs)
+    if total_unique > 0:
+        total_energy = sum(song.get("energy", 0) for song in all_songs)
+        avg_energy = total_energy / total_unique
 
     top_artist, top_count = most_common_artist(all_songs)
 
     return {
-        "total_songs": len(all_songs),
+        "total_songs": total_unique,
         "hype_count": len(hype),
         "chill_count": len(chill),
         "mixed_count": len(mixed),
@@ -136,7 +191,6 @@ def compute_playlist_stats(playlists: PlaylistMap) -> Dict[str, object]:
         "top_artist": top_artist,
         "top_artist_count": top_count,
     }
-
 
 def most_common_artist(songs: List[Song]) -> Tuple[str, int]:
     """Return the most common artist and count."""
@@ -154,6 +208,26 @@ def most_common_artist(songs: List[Song]) -> Tuple[str, int]:
     return items[0]
 
 
+# def search_songs(
+#     songs: List[Song],
+#     query: str,
+#     field: str = "artist",
+# ) -> List[Song]:
+#     """Return songs matching the query on a given field."""
+#     if not query:
+#         return songs
+
+#     q = query.lower().strip()
+#     filtered: List[Song] = []
+
+#     for song in songs:
+#         value = str(song.get(field, "")).lower()
+#         if value and value in q:
+#             filtered.append(song)
+
+#     return filtered
+
+# FIXED FEB 25 2026
 def search_songs(
     songs: List[Song],
     query: str,
@@ -168,11 +242,10 @@ def search_songs(
 
     for song in songs:
         value = str(song.get(field, "")).lower()
-        if value and value in q:
+        if q in value:
             filtered.append(song)
 
     return filtered
-
 
 def lucky_pick(
     playlists: PlaylistMap,
@@ -189,12 +262,19 @@ def lucky_pick(
     return random_choice_or_none(songs)
 
 
+# def random_choice_or_none(songs: List[Song]) -> Optional[Song]:
+#     """Return a random song or None."""
+#     import random
+
+#     return random.choice(songs)
+
+# FIXED - FEB 25 2026
 def random_choice_or_none(songs: List[Song]) -> Optional[Song]:
     """Return a random song or None."""
     import random
-
+    if not songs:
+        return None
     return random.choice(songs)
-
 
 def history_summary(history: List[Song]) -> Dict[str, int]:
     """Return a summary of moods seen in the history."""
