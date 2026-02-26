@@ -57,6 +57,7 @@ def normalize_song(raw: Song) -> Song:
     }
 
 # FIXED - FEB 25 2026
+# Improve Classification Keyword Handling (Case-Safe)
 def classify_song(song: Song, profile: Dict[str, object]) -> str:
     """Return a mood label given a song and user profile."""
     energy = song.get("energy", 0)
@@ -152,26 +153,6 @@ def most_common_artist(songs: List[Song]) -> Tuple[str, int]:
 
     items = sorted(counts.items(), key=lambda item: item[1], reverse=True)
     return items[0]
-
-
-# def search_songs(
-#     songs: List[Song],
-#     query: str,
-#     field: str = "artist",
-# ) -> List[Song]:
-#     """Return songs matching the query on a given field."""
-#     if not query:
-#         return songs
-
-#     q = query.lower().strip()
-#     filtered: List[Song] = []
-
-#     for song in songs:
-#         value = str(song.get(field, "")).lower()
-#         if value and value in q:
-#             filtered.append(song)
-
-#     return filtered
 
 # FIXED FEB 25 2026
 # Correct Search Logic (Partial, Case-Insensitive Match)
