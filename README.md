@@ -1,113 +1,111 @@
-# Playlist Chaos
+## README Outline – Playlist Chaos (Lab Submission)
 
-Your AI assistant tried to build a smart playlist generator. The app runs, but some of the behavior is unpredictable. Your task is to explore the app, investigate the code, and use an AI assistant to debug and improve it.
+### 1. Project Overview
 
-This activity is your first chance to practice AI-assisted debugging on a codebase that is slightly messy, slightly mysterious, and intentionally imperfect.
-
-You do not need to understand everything at once. Approach the app as a curious investigator, work with an AI assistant to explain what you find, and make targeted improvements.
+This project focused on debugging and improving an AI-generated Streamlit playlist application that categorizes songs into Hype, Chill, and Mixed playlists based on user-defined mood settings. The objective was to investigate inconsistent behavior, identify logic flaws in the underlying Python code, implement targeted fixes, and validate improvements through systematic testing. The lab emphasized structured debugging, disciplined use of AI assistance, and maintaining clean version control throughout the process.
 
 ---
 
-## How the code is organized
+### 2. Summary of Fixes
 
-### `app.py`  
+#### Fix 1 – Search Logic Reversed
 
-The Streamlit user interface. It handles things like:
+**Issue Observed:**
+Search results were inconsistent, and partial matches like typing “ac” did not reliably return “AC/DC.”
 
-- Showing and updating the mood profile  
-- Adding songs  
-- Displaying playlists  
-- Lucky pick  
-- Stats and history
+**Root Cause:**
+The search function checked whether the full artist value existed inside the query string instead of checking whether the query string existed inside the artist value.
 
-### `playlist_logic.py`  
+**Solution Implemented:**
+Reversed the containment logic to `if q in value`, ensuring proper case-insensitive partial matching aligned with expected search behavior.
 
-The logic behind the app, including:
-
-- Normalizing and classifying songs  
-- Building playlists  
-- Merging playlist data  
-- Searching  
-- Computing statistics  
-- Lucky pick mechanics
-
-You will need to look at both files to understand how the app behaves.
+**How I Tested It:**
+Tested multiple partial searches (e.g., “ac”, “queen”, “dav”) across different playlists and confirmed all appropriate songs appeared correctly.
 
 ---
 
-## What you will do
+#### Fix 2 – Incorrect Playlist Statistics Calculations
 
-### 1. Explore the app  
+**Issue Observed:**
+Hype ratio and average energy values were inaccurate and did not reflect all songs in the system.
 
-Run the app and try things out:
+**Root Cause:**
+The calculation incorrectly used only Hype songs when computing totals and energy averages, causing inflated ratios and misleading averages.
 
-- Add several songs with different titles, artists, genres, and energy levels  
-- Change the mood profile  
-- Use the search box  
-- Try the lucky pick  
-- Inspect the playlist tabs and stats  
-- Look at the history  
+**Solution Implemented:**
+Updated the statistics function to calculate totals and averages using all songs across all playlists and corrected the hype ratio denominator.
 
-As you explore, write down at least five things that feel confusing, inconsistent, or strange. These might be bugs, quirks, or unexpected design decisions.
-
-### 2. Ask AI for help understanding the code  
-
-Pick one issue from your list. Use an AI coding assistant to:
-
-- Explain the relevant code sections  
-- Walk through what the code is supposed to do  
-- Suggest reasons the behavior might not match expectations  
-
-For example:
-
-> "Here is the function that classifies songs. The app is mislabeling some songs. Help me understand what the function is doing and where the logic might need adjustment."
-
-Before making changes, summarize in your own words what you think is happening.
-
-### 3. Fix at least four issues  
-
-Make improvements based on your investigation.
-
-For each fix:
-
-- Identify the source of the issue  
-- Decide whether to accept or adjust the AI assistant's suggestions  
-- Update the code  
-- Add a short comment describing the fix  
-
-Your fixes may involve logic, calculations, search behavior, playlist grouping, lucky pick behavior, or anything else you discover.
-
-### 4. Test your changes  
-
-After each fix, try interacting with the app again:
-
-- Add new songs  
-- Change the profile  
-- Try search and stats  
-- Check whether playlists behave more consistently  
-
-Confirm that the behavior matches your expectations.
-
-### 5. Optional stretch goals  
-
-If you finish early or want an extra challenge, try one of these:
-
-- Improve search behavior  
-- Add a "Recently added" view  
-- Add sorting controls  
-- Improve how Mixed songs are handled  
-- Add new features to the history view  
-- Introduce better error handling for empty playlists  
-- Add a new playlist category of your own design  
+**How I Tested It:**
+Manually verified song counts and energy averages using small controlled datasets and confirmed that displayed metrics matched expected mathematical results.
 
 ---
 
-## Tips for success
+#### Fix 3 – Lucky Pick Crash on Empty Playlists
 
-- You do not need to solve everything. Focus on exploring and learning.  
-- When confused, ask an AI assistant to explain the code or summarize behavior.  
-- Test the app often. Small experiments reveal useful clues.  
-- Treat surprising behavior as something worth investigating.  
-- Stay curious. The unpredictability is intentional and part of the experience.
+**Issue Observed:**
+Selecting Lucky Pick when a playlist was empty caused the app to crash instead of displaying a warning.
 
-When you finish, Playlist Chaos will feel more predictable, and you will have taken your first steps into AI-assisted debugging.
+**Root Cause:**
+The random selection function attempted to choose from an empty list without checking if songs were available.
+
+**Solution Implemented:**
+Added a guard clause to return `None` when the playlist is empty, allowing the UI to display a warning instead of raising an exception.
+
+**How I Tested It:**
+Cleared songs and attempted Lucky Pick in each mode, confirming the app displayed a warning message without crashing.
+
+---
+
+#### Fix 4 – Case Sensitivity in Mood Classification
+
+**Issue Observed:**
+Some songs were misclassified when genre or title case did not match expected keyword casing.
+
+**Root Cause:**
+Keyword checks in the classification function were not consistently normalized to lowercase before comparison.
+
+**Solution Implemented:**
+Normalized title, genre, and favorite genre values to lowercase before evaluating keyword conditions to ensure consistent comparisons.
+
+**How I Tested It:**
+Added songs with varied capitalization (e.g., “ROCK”, “Ambient”, “Sleep Track”) and confirmed they were classified into the correct playlists.
+
+---
+
+### 3. Refactor Summary
+
+**What Was Refactored:**
+The `compute_playlist_stats` function was reorganized to calculate totals, ratios, and averages using a single aggregated song list with clearer variable flow.
+
+**Why It Improved Readability/Structure:**
+The logic now follows a clean sequence—collect songs, compute totals, calculate derived metrics—making the function easier to understand and maintain.
+
+**Verification That Behavior Stayed the Same:**
+After refactoring, I retested playlist counts, ratios, and averages with controlled song inputs and confirmed all outputs remained correct.
+
+---
+
+### 4. Application Screenshot
+
+![App Screenshot](./doc/screenshot1.png)
+
+![App Screenshot](./doc/screenshot2.png)
+
+---
+
+### 5. Reflection Discussion
+
+**Issue I Chose to Fix and Why:**
+I focused on fixing the statistics logic first because incorrect metrics directly impact reliability and user trust.
+
+**How I Used AI During Debugging:**
+I used AI to explain the existing logic and identify where calculations were incorrect before making focused edits.
+
+**Where AI Was Helpful / Not Helpful:**
+AI helped identify flawed math quickly but required review to avoid unnecessary structural changes.
+
+**Testing Strategy:**
+I tested each fix incrementally by adding songs, checking playlists, verifying search behavior, and manually confirming calculations.
+
+**Key Insight About AI-Assisted Debugging:**
+AI works best as a guided collaborator—clear prompts and manual validation are critical to producing accurate fixes.
