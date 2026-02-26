@@ -2,74 +2,73 @@
 
 ### 1. Project Overview
 
-Brief description of the project and objective.
-*Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.*
+This project focused on debugging and improving an AI-generated Streamlit playlist application that categorizes songs into Hype, Chill, and Mixed playlists based on user-defined mood settings. The objective was to investigate inconsistent behavior, identify logic flaws in the underlying Python code, implement targeted fixes, and validate improvements through systematic testing. The lab emphasized structured debugging, disciplined use of AI assistance, and maintaining clean version control throughout the process.
 
 ---
 
 ### 2. Summary of Fixes
 
-#### Fix 1 – [Short Title of Issue]
+#### Fix 1 – Search Logic Reversed
 
 **Issue Observed:**
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Search results were inconsistent, and partial matches like typing “ac” did not reliably return “AC/DC.”
 
 **Root Cause:**
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+The search function checked whether the full artist value existed inside the query string instead of checking whether the query string existed inside the artist value.
 
 **Solution Implemented:**
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Reversed the containment logic to `if q in value`, ensuring proper case-insensitive partial matching aligned with expected search behavior.
 
 **How I Tested It:**
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Tested multiple partial searches (e.g., “ac”, “queen”, “dav”) across different playlists and confirmed all appropriate songs appeared correctly.
 
 ---
 
-#### Fix 2 – [Short Title of Issue]
+#### Fix 2 – Incorrect Playlist Statistics Calculations
 
 **Issue Observed:**
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Hype ratio and average energy values were inaccurate and did not reflect all songs in the system.
 
 **Root Cause:**
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+The calculation incorrectly used only Hype songs when computing totals and energy averages, causing inflated ratios and misleading averages.
 
 **Solution Implemented:**
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Updated the statistics function to calculate totals and averages using all songs across all playlists and corrected the hype ratio denominator.
 
 **How I Tested It:**
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Manually verified song counts and energy averages using small controlled datasets and confirmed that displayed metrics matched expected mathematical results.
 
 ---
 
-#### Fix 3 – [Short Title of Issue]
+#### Fix 3 – Lucky Pick Crash on Empty Playlists
 
 **Issue Observed:**
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Selecting Lucky Pick when a playlist was empty caused the app to crash instead of displaying a warning.
 
 **Root Cause:**
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+The random selection function attempted to choose from an empty list without checking if songs were available.
 
 **Solution Implemented:**
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Added a guard clause to return `None` when the playlist is empty, allowing the UI to display a warning instead of raising an exception.
 
 **How I Tested It:**
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Cleared songs and attempted Lucky Pick in each mode, confirming the app displayed a warning message without crashing.
 
 ---
 
-#### Fix 4 – [Short Title of Issue]
+#### Fix 4 – Case Sensitivity in Mood Classification
 
 **Issue Observed:**
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Some songs were misclassified when genre or title case did not match expected keyword casing.
 
 **Root Cause:**
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Keyword checks in the classification function were not consistently normalized to lowercase before comparison.
 
 **Solution Implemented:**
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Normalized title, genre, and favorite genre values to lowercase before evaluating keyword conditions to ensure consistent comparisons.
 
 **How I Tested It:**
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+Added songs with varied capitalization (e.g., “ROCK”, “Ambient”, “Sleep Track”) and confirmed they were classified into the correct playlists.
 
 ---
 
@@ -88,9 +87,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 
 ### 4. Application Screenshot
 
-*Insert screenshot below:*
+![App Screenshot](doc/Screenshot 2026-02-25 191635.png)
 
-![App Screenshot](screenshot-placeholder.png)
+![App Screenshot](doc/Screenshot 2026-02-25 191658.png)
 
 ---
 

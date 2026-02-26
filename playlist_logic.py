@@ -228,6 +228,7 @@ def most_common_artist(songs: List[Song]) -> Tuple[str, int]:
 #     return filtered
 
 # FIXED FEB 25 2026
+# Correct Search Logic (Partial, Case-Insensitive Match)
 def search_songs(
     songs: List[Song],
     query: str,
