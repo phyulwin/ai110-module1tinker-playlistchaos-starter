@@ -75,37 +75,37 @@ Added songs with varied capitalization (e.g., “ROCK”, “Ambient”, “Slee
 ### 3. Refactor Summary
 
 **What Was Refactored:**
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+The `compute_playlist_stats` function was reorganized to calculate totals, ratios, and averages using a single aggregated song list with clearer variable flow.
 
 **Why It Improved Readability/Structure:**
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+The logic now follows a clean sequence—collect songs, compute totals, calculate derived metrics—making the function easier to understand and maintain.
 
 **Verification That Behavior Stayed the Same:**
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+After refactoring, I retested playlist counts, ratios, and averages with controlled song inputs and confirmed all outputs remained correct.
 
 ---
 
 ### 4. Application Screenshot
 
-![App Screenshot](doc/Screenshot 2026-02-25 191635.png)
+![App Screenshot](./doc/screenshot1.png)
 
-![App Screenshot](doc/Screenshot 2026-02-25 191658.png)
+![App Screenshot](./doc/screenshot2.png)
 
 ---
 
 ### 5. Reflection Discussion
 
 **Issue I Chose to Fix and Why:**
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+I focused on fixing the statistics logic first because incorrect metrics directly impact reliability and user trust.
 
 **How I Used AI During Debugging:**
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+I used AI to explain the existing logic and identify where calculations were incorrect before making focused edits.
 
 **Where AI Was Helpful / Not Helpful:**
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+AI helped identify flawed math quickly but required review to avoid unnecessary structural changes.
 
 **Testing Strategy:**
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+I tested each fix incrementally by adding songs, checking playlists, verifying search behavior, and manually confirming calculations.
 
 **Key Insight About AI-Assisted Debugging:**
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+AI works best as a guided collaborator—clear prompts and manual validation are critical to producing accurate fixes.
